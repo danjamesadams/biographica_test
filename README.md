@@ -21,3 +21,12 @@ following command creates a database under the *db* directory:
 
 `makeblastdb -in data/assembly_1.prot.fa -dbtype prot -title "Brassica napus db" -out db/brassica_db`
 
+### Searching against the database
+
+Using the parameters specified in the task (coverage of 90%), we can run a protein BLAST against our database:
+
+`blastp -db db/brassica_db -query data/assembly_2.prot.fa -out output/blastp_raw.txt -qcov_hsp_perc 90 -outfmt "6 qseqid sseqid nident pident length mismatch gapopen qlen slen evalue" -max_target_seqs 25 -num_threads 8`
+
+Then apply the 95% identity (identical positions, rather than positive-scoring matches) filter:
+
+`awk '$4>=95' output/blastp_raw.txt > output/blastp_results.txt`
