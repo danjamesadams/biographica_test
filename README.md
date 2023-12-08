@@ -25,8 +25,18 @@ following command creates a database under the *db* directory:
 
 Using the parameters specified in the task (coverage of 90%), we can run a protein BLAST against our database:
 
-`blastp -db db/brassica_db -query data/assembly_2.prot.fa -out output/blastp_raw.txt -qcov_hsp_perc 90 -outfmt "6 qseqid sseqid nident pident length mismatch gapopen qlen slen evalue" -max_target_seqs 25 -num_threads 8`
+`blastp -db db/brassica_db -query data/assembly_2.prot.fa -out output/blastp_raw.txt -qcov_hsp_perc 90 -outfmt "6 qseqid sseqid nident pident length mismatch gapopen qlen slen evalue bitscore" -max_target_seqs 25 -num_threads 8`
 
-Then apply the 95% identity (identical positions, rather than positive-scoring matches) filter:
+This command took about 53 minutes on my local machine. Next apply the 95% identity (identical positions, rather than 
+positive-scoring matches) filter:
 
 `awk '$4>=95' output/blastp_raw.txt > output/blastp_results.txt`
+
+### Parsing the output and generating the final file
+
+To complete the first task, we just need to call the task1.py script on our input files and BlastP alignment (note that 
+the files uploaded to the *output* directory have been zipped for upload):
+
+`python scripts/task1.py data/assembly_1.prot.fa data/assembly_2.prot.fa output/blastp.txt output/final.fa`
+
+This creates the final merged FASTA file, which has been included in the *output* directory.
