@@ -1,3 +1,5 @@
+import argparse
+
 from Bio import SeqIO
 import pandas as pd
 
@@ -65,11 +67,12 @@ class ProteinBLASTMapper:
 
         return best_matches
 
-    def write_output_fasta_file(self, aligned_sequences: pd.DataFrame) -> None:
+    def write_output_fasta_file(self, aligned_sequences: pd.DataFrame, output_fasta: str) -> None:
         """Create a protein FASTA file with each unique sequence (counting those that successfully mapped according to
         BlastP as a single sequence per pair) recorded once. Those mapped pairs are written with concatenated headers.
 
         :param aligned_sequences: A pandas Dataframe containing the best alignments from a BlastP output
+        :param output_fasta: Where to save the final output FASTA file
         """
         # Read the sequences from the original FASTA files
         assembly1_dict = SeqIO.to_dict(SeqIO.parse(self.assembly1, "fasta"))
@@ -80,7 +83,7 @@ class ProteinBLASTMapper:
         assembly2_mapped_sequences = aligned_sequences["qseqid"].tolist()
 
         # Open the output FASTA file for writing the sequences
-        with open("output/final.fa", "wt") as final_fasta:
+        with open(output_fasta, "wt") as final_fasta:
             # Start with the larger, first assembly (our database/subject proteins)
             for sequence in assembly1_dict:
                 # Store the ID in a variable
@@ -114,5 +117,14 @@ class ProteinBLASTMapper:
 
 
 if __name__ == "__main__":
-    # TODO: Add argparse functionality to call script from the command line
-    pass
+    parser = argparse.ArgumentParser(description="Parse BLASTP output file and ")
+
+    parser.add_argument("assembly1", help="Path to the first, larger protein FASTA file")
+    parser.add_argument("assembly2", help="Path to the second, smaller protein FASTA file")
+    parser.add_argument("alignment", help="Path to the BlastP output of the two assemblies")
+    parser.add_argument("output_file", help="Path to the output FASTA file")
+    args = parser.parse_args()
+
+    mapper = ProteinBLASTMapper(args.assembly1, args.assembly2, args.alignment)
+    aligned_seqs = mapper.parse_protein_blast_results_and_select_best_matches()
+    mapper.write_output_fasta_file(aligned_seqs, args.output_file)
