@@ -3,6 +3,8 @@ import argparse
 from Bio import SeqIO
 import pandas as pd
 
+from common_functions import parse_fasta_file
+
 
 # Column labels for the BlastP alignment output
 HEADER = ["qseqid", "sseqid", "nident", "pident", "length", "mismatch", "gapopen", "qlen", "slen", "evalue", "bitscore"]
@@ -75,8 +77,8 @@ class ProteinBLASTMapper:
         :param output_fasta: Where to save the final output FASTA file
         """
         # Read the sequences from the original FASTA files
-        assembly1_dict = SeqIO.to_dict(SeqIO.parse(self.assembly1, "fasta"))
-        assembly2_dict = SeqIO.to_dict(SeqIO.parse(self.assembly2, "fasta"))
+        assembly1_dict = parse_fasta_file(self.assembly1)
+        assembly2_dict = parse_fasta_file(self.assembly2)
 
         # Get the identifiers of sequences that are matches in the 'best_matches' DataFrame
         assembly1_mapped_sequences = aligned_sequences["sseqid"].tolist()
