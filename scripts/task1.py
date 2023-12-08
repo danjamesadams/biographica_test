@@ -79,12 +79,10 @@ class ProteinBLASTMapper:
         assembly1_mapped_sequences = aligned_sequences["sseqid"].tolist()
         assembly2_mapped_sequences = aligned_sequences["qseqid"].tolist()
 
-        # Open the output FASTA file for writing
-        with open("output/final.fa", "wt") as outfile:
-
+        # Open the output FASTA file for writing the sequences
+        with open("output/final.fa", "wt") as final_fasta:
             # Start with the larger, first assembly (our database/subject proteins)
             for sequence in assembly1_dict:
-
                 # Store the ID in a variable
                 sequence_id = assembly1_dict[sequence].id
 
@@ -97,20 +95,24 @@ class ProteinBLASTMapper:
                     sequence_id = f"assembly_1.prot.fa={sequence_id}"
 
                 # Write the record to the FASTA file
-                seq_record = SeqIO.SeqRecord(sequence.seq, id=sequence_id)
-                SeqIO.write(seq_record, outfile, "fasta")
+                record = SeqIO.SeqRecord(assembly1_dict[sequence].seq, id=sequence_id, description="")
+                SeqIO.write(record, final_fasta, "fasta")
 
             # Move onto the smaller, second assembly (our query proteins)
             for sequence in assembly2_dict:
-                # As we have already written out the mapped proteins, we can skip any matches in the query assembly
-                if assembly2_dict[sequence].id in assembly2_mapped_sequences:
+                # Store the ID in a variable
+                sequence_id = assembly2_dict[sequence].id
+
+                # As we have already written out the mapped proteins, skip any matches in the query assembly
+                if sequence_id in assembly2_mapped_sequences:
                     continue
-                else:
-                    # Write the record to the FASTA file
-                    seq_record = SeqIO.SeqRecord(sequence.seq, id=f"assembly_2.prot.fa={sequence_id}")
-                    SeqIO.write(seq_record, outfile, "fasta")
+
+                # If we did not map the protein, add it to the final FASTA file
+                sequence_id = f"assembly_2.prot.fa={sequence_id}"
+                record = SeqIO.SeqRecord(assembly2_dict[sequence].seq, id=sequence_id, description="")
+                SeqIO.write(record, final_fasta, "fasta")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # TODO: Add argparse functionality to call script from the command line
     pass
