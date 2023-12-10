@@ -40,3 +40,13 @@ the files uploaded to the *output* directory have been zipped for upload):
 `python scripts/task1.py data/assembly_1.prot.fa data/assembly_2.prot.fa output/blastp.txt output/final.fa`
 
 This creates the final merged FASTA file, which has been included in the *output* directory.
+
+
+## Task 2
+
+The second task asks to find proteins with 'hydrolase activity, acting on ester bonds', which is a Gene Ontology term
+the maps to GO:0016788. Running task2.py with this GO term and the sequence file generated in the first task looks like
+this:
+
+`python scripts/task2.py output/final.fa GO:0016788`
+
