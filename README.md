@@ -50,3 +50,5 @@ this:
 
 `python scripts/task2.py output/final.fa GO:0016788`
 
+The output of the script indicates that the protein _A01p09130.1_ is the first protein mapped from _assembly_1.prot.fa_
+that has hydrolase activity, acting on ester bonds.
