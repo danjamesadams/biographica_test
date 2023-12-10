@@ -50,23 +50,32 @@ class UniProtMapper:
         """
         proteins_with_desired_function = []
         for sequence in sequence_records:
+            # We stored our protein IDs in the annotations attribute in the previous function
             protein_id = sequence_records[sequence].annotations
+            # Attempt to retrieve a UniProt accession by searching with a protein ID
             response = requests.get(self.UNIPROT_BASE_URL + "search?fields=id&format=json&query={}".format(protein_id))
-            # Interrogate the JSON output to extract the UniProt accession
-            if (
-                response.status_code == 200
-                and response.json()["results"]
-                and response.json()["results"][0]["primaryAccession"]
-            ):
-                uniprot_entry = requests.get(self.UNIPROT_BASE_URL + response.json()["results"][0]["primaryAccession"])
-                if response.status_code == 200:
-                    for cross_reference in uniprot_entry.json()["uniProtKBCrossReferences"]:
-                        # Check to see if we have any Gene Ontology entries for our UniProt entry
-                        if cross_reference["database"] == "GO":
-                            if cross_reference["database"]["id"] == self.go_id:
-                                proteins_with_desired_function.append(sequence.description)
+            response.raise_for_status()
+
+            # There are quite a few things that could go wrong here, so wrap them all in a try-block
+            try:
+                # Interrogate the JSON output to extract the UniProt accession
+                uniprot_accession = response.json()["results"][0]["primaryAccession"]
+                uniprot_entry = requests.get(self.UNIPROT_BASE_URL + uniprot_accession)
+                uniprot_entry.raise_for_status()
+
+                for cross_reference in uniprot_entry.json()["uniProtKBCrossReferences"]:
+                    # Check to see if we have any Gene Ontology entries for our UniProt entry
+                    if cross_reference["database"] == "GO":
+                        if cross_reference["database"]["id"] == self.go_id:
+                            proteins_with_desired_function.append(sequence.description)
+                            # Stop checking this protein if it contains the desired term
+                            break
+
+            # If anything went amiss, raise it as an exception
+            except requests.RequestException as e:
+                return f"The following error occurred whilst trying to search UniProt: {str(e)}"
 
         if proteins_with_desired_function:
-            return f"The following proteins have the GO ID {self.go_id}: {sequence.description}"
+            return f"The following proteins have the GO term {self.go_id}: {','.join(proteins_with_desired_function)}"
 
         return f"No proteins were found with the GO term {self.go_id}"
