@@ -68,7 +68,7 @@ class UniProtMapper:
                 for cross_reference in uniprot_entry.json()["uniProtKBCrossReferences"]:
                     # Check to see if we have any Gene Ontology entries for our UniProt entry
                     if cross_reference["database"] == "GO":
-                        if cross_reference["database"]["id"] == self.go_id:
+                        if cross_reference["id"] == self.go_id:
                             proteins_with_desired_function.append(sequence.description)
                             # Stop checking this protein if it contains the desired term
                             break
