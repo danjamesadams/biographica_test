@@ -69,17 +69,14 @@ class UniProtMapper:
                     # Check to see if we have any Gene Ontology entries for our UniProt entry
                     if cross_reference["database"] == "GO":
                         if cross_reference["id"] == self.go_id:
-                            proteins_with_desired_function.append(sequence.description)
-                            # Stop checking this protein if it contains the desired term
-                            break
+                            print(sequence_records[sequence].description)
+                            return
 
             # If anything went amiss, raise it as an exception
             except requests.RequestException as e:
                 return f"The following error occurred whilst trying to search UniProt: {str(e)}"
 
-        if proteins_with_desired_function:
-            return f"The following proteins have the GO term {self.go_id}: {','.join(proteins_with_desired_function)}"
-
+        # Print a message to the console to say that nothing matching was found
         return f"No proteins were found with the GO term {self.go_id}"
 
 
