@@ -1,3 +1,5 @@
+import argparse
+
 import requests
 from Bio.SeqRecord import SeqRecord
 
@@ -79,3 +81,15 @@ class UniProtMapper:
             return f"The following proteins have the GO term {self.go_id}: {','.join(proteins_with_desired_function)}"
 
         return f"No proteins were found with the GO term {self.go_id}"
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Identify proteins with a specific GO term from a provided FASTA file")
+
+    parser.add_argument("sequence_file", help="Path to the first, larger protein FASTA file")
+    parser.add_argument("go_term", help="Path to the second, smaller protein FASTA file")
+    args = parser.parse_args()
+
+    mapper = UniProtMapper(args.sequence_file, args.go_term)
+    sequences_in_both_assemblies = mapper.select_records_that_were_in_both_assemblies()
+    mapper.retrieve_uniprot_entries_and_pull_out_by_function(sequences_in_both_assemblies)
