@@ -52,3 +52,42 @@ this:
 
 The output of the script indicates that the protein _A01p09130.1_ is the first protein mapped from _assembly_1.prot.fa_
 that has hydrolase activity, acting on ester bonds.
+
+
+## Further considerations and future work
+
+There are a number of improvements that could be made to this process that would result in a better product. 
+Documented here are some thoughts about what the next steps would be for writing out this pipeline.
+
+Firstly, the work here can't really be considered a true pipeline as such, as the scripts must be called manually. A 
+good immediate next step would be to implement some proper pipeline functionality by wrapping the code with an 
+orchestrator such as NextFlow. Moreover, there is a lot of work that could be done to both scripts (but especially 
+task2.py) to generalise them, as right now they are not at all robust and would not cope with using any other format 
+than the one present in the two input files. A potential solution would be to have a modular system for reading in
+different types of FASTA file headers.
+
+Secondly, another easy win would be to make the script for the second task store and output EVERY protein that matched
+a given GO term - this is easy to code, but my internet access has been poor these last few days and the API calls were
+taking a while, so I decided it was best to print the first matching protein. The _task2.py_ script could also be
+simplified by removing the input-subsetting function, as this is super specific and it would be cleaner to alter
+_task1.py_ to output a file JUST the sequences that were present in both files, rather than all of the sequences from 
+both files.
+
+### Pipeline versioning, data governance, metadata logging and scaling
+
+Early on in the README I mention that it would be ideal if this were hosted in the cloud, as that gives easy access to 
+scalability. For instance if these scripts were to be run on the cloud, it would be very easy to horizontally scale out 
+the BLAST search using compute-specific resources (easily accessed by setting the number of threads in the BLAST call) 
+as well as parallelising the API calls.
+
+Similarly, cloud-native resources such as resource monitoring would be a good first step for metadata logging, 
+collecting usage statistics, such as the time taken for API responses or the amount of compute time and power used. 
+This could also be done at the simplest level using the python _logger_ module and writing usage statistics to a file,
+but there are plenty of third-party solutions that would fit the bill (for example CircleCI or Splunk).
+
+Cloud-hosting would also allow for easy handling of data governance, as one could set up security groups specific to 
+certain customers (i.e. with AWS's IAM or an implementation of Active Directory), which would prevent inappropriate 
+access to commercially sensitive materials. 
+
+A naive pipeline versioning has been implemented here with a git tag, which could be incremented appropriately with 
+features, fixes and release work. This would work with a NextFlow-based pipeline as once can pull based on a git tag.
