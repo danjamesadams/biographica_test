@@ -59,9 +59,10 @@ that has hydrolase activity, acting on ester bonds.
 There are a number of improvements that could be made to this process that would result in a better product. 
 Documented here are some thoughts about what the next steps would be for writing out this pipeline.
 
-Firstly, the work here can't really be considered a true pipeline as such, as the scripts must be called manually. A 
+Firstly, ~~the work here can't really be considered a true pipeline as such, as the scripts must be called manually. A 
 good immediate next step would be to implement some proper pipeline functionality by wrapping the code with an 
-orchestrator such as NextFlow. Moreover, there is a lot of work that could be done to both scripts (but especially 
+orchestrator such as NextFlow~~ a basic NextFlow script has been written around the BLAST portion of the task to 
+demonstrate functionality. Moreover, there is a lot of work that could be done to both scripts (but especially 
 task2.py) to generalise them, as right now they are not at all robust and would not cope with using any other format 
 than the one present in the two input files. A potential solution would be to have a modular system for reading in
 different types of FASTA file headers.
