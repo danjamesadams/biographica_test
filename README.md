@@ -1,6 +1,6 @@
 # Biographica interview task
 
-This repo contains the thought processes, code and output for the Bioinformatician role at Biographica.
+This repo contains the thought processes, code and output for the Bioinformatician interview task at Biographica.
 
 An initial inspection of the data shows that *assembly_1.prot.fa* contains 108190 sequences and *assembly_2.prot.fa* 
 contains 61153 sequences, meaning that not every sequence in the first file will have a direct map in the second. Also
@@ -32,6 +32,8 @@ positive-scoring matches) filter:
 
 `awk '$4>=95' output/blastp_raw.txt > output/blastp_results.txt`
 
+*Up to this part of the task has been incorporated into the NextFlow directory.
+
 ### Parsing the output and generating the final file
 
 To complete the first task, we just need to call the task1.py script on our input files and BlastP alignment (note that 
@@ -61,11 +63,12 @@ Documented here are some thoughts about what the next steps would be for writing
 
 Firstly, ~~the work here can't really be considered a true pipeline as such, as the scripts must be called manually. A 
 good immediate next step would be to implement some proper pipeline functionality by wrapping the code with an 
-orchestrator such as NextFlow~~ a basic NextFlow script has been written around the BLAST portion of the task to 
-demonstrate functionality. Moreover, there is a lot of work that could be done to both scripts (but especially 
-task2.py) to generalise them, as right now they are not at all robust and would not cope with using any other format 
-than the one present in the two input files. A potential solution would be to have a modular system for reading in
-different types of FASTA file headers.
+orchestrator such as NextFlow~~ the pipeline should be extended to incorporate the two task scripts; a basic NextFlow 
+script has been written around the BLAST portion of the task to demonstrate functionality, but due to the constraints of
+time I did not implement the wrapper for the python segment. Moreover, there is a lot of work that could be done to both
+scripts (but especially _task2.py_) to generalise them, as right now they are not at all robust and would not cope with 
+using any other format than the one present in the two input files. A potential solution would be to have a modular 
+system for reading in different types of FASTA file headers.
 
 Secondly, another easy win would be to make the script for the second task store and output EVERY protein that matched
 a given GO term - this is easy to code, but my internet access has been poor these last few days and the API calls were
@@ -91,4 +94,4 @@ certain customers (i.e. with AWS's IAM or an implementation of Active Directory)
 access to commercially sensitive materials. 
 
 A naive pipeline versioning has been implemented here with a git tag, which could be incremented appropriately with 
-features, fixes and release work. This would work with a NextFlow-based pipeline as once can pull based on a git tag.
+features, fixes and release work. This would work with a NextFlow-based pipeline as one can pull based on a git tag.
